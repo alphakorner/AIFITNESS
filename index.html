@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#000000" />
+    <title>AI FITNESS — Ton coach IA. Perds tes kilos selon ton anatomie.</title>
+    <meta name="description" content="L'IA fitness révolutionnaire entraînée sur +5M de données d'experts. Analyse photo, programme sur-mesure, coach IA 24/7." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="AI Fitness" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Oxanium:wght@600;800&family=Inter:wght@400;500;600;700;800&display=swap" />
+    <style>
+      @property --angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+
+      :root {
+        --bg: #000000;
+        --surface: #0e0e0e;
+        --surface2: #181818;
+        --yellow: #ffec00;
+        --yellow-d: #d9c900;
+        --white: #ffffff;
+        --muted: #9a9a9a;
+        --border: rgba(255, 255, 255, 0.1);
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+      html, body { background: var(--bg); color: var(--white); font-family: "Inter", system-ui, sans-serif; overscroll-behavior: none; min-height: 100dvh; }
+      a { text-decoration: none; color: inherit; }
+      img { display: block; max-width: 100%; }
+      button, input { font-family: inherit; color: inherit; }
+      button { background: none; border: none; cursor: pointer; }
+      .display { font-family: "Anton", sans-serif; text-transform: uppercase; letter-spacing: 0.01em; font-weight: 400; }
+      .text-y { color: var(--yellow); }
+      .muted { color: var(--muted); }
+
+      .screen { display: none; }
+      .screen.active { display: block; animation: fade 0.4s ease both; }
+      @keyframes fade { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+      .app { max-width: 28rem; margin: 0 auto; padding: 0 1rem 7rem; }
+
+      .glass { background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01)); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border); }
+
+      /* ============== LANDING (style Fitness Park) ============== */
+      .landing { max-width: 28rem; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+      .l-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.25rem; }
+      .wordmark { font-family: "Anton"; font-size: 1.5rem; text-transform: uppercase; }
+      .wordmark .y { color: var(--yellow); }
+      .l-login { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #fff; border: 1px solid var(--border); padding: 0.5rem 0.85rem; border-radius: 0.5rem; }
+      .hero-kicker { display: inline-block; background: var(--yellow); color: #000; font-weight: 800; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.3rem 0.6rem; border-radius: 0.4rem; margin-bottom: 1rem; }
+      .hero-title { font-family: "Anton"; font-size: 2.9rem; line-height: 0.96; text-transform: uppercase; }
+      .hero-title .y { color: var(--yellow); }
+      .hero-sub { color: #d6d6d6; margin-top: 1rem; font-size: 0.95rem; line-height: 1.55; }
+      .l-cta { display: flex; flex-direction: column; gap: 0.7rem; margin-top: 1.5rem; }
+      .btn-fp { display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem; border-radius: 0.6rem; font-family: "Anton"; letter-spacing: 0.03em; text-transform: uppercase; font-size: 1.02rem; transition: transform 0.12s; }
+      .btn-fp:active { transform: scale(0.98); }
+      .btn-fp.primary { background: var(--yellow); color: #000; }
+      .btn-fp.ghost { border: 2px solid #fff; color: #fff; }
+      .badges { display: flex; gap: 0.5rem; margin-top: 2rem; flex-wrap: wrap; }
+      .badge-fp { background: var(--surface2); border: 1px solid var(--border); border-radius: 0.5rem; padding: 0.55rem 0.8rem; font-size: 0.72rem; font-weight: 700; }
+      .badge-fp .y { color: var(--yellow); }
+      .l-sec-t { font-family: "Anton"; text-transform: uppercase; font-size: 1.5rem; margin: 2.75rem 0 1rem; }
+      .l-sec-t .y { color: var(--yellow); }
+      .steps { display: flex; flex-direction: column; gap: 0.7rem; }
+      .step { display: flex; gap: 1rem; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1rem; }
+      .step .num { font-family: "Anton"; font-size: 1.7rem; color: var(--yellow); width: 1.8rem; flex: none; }
+      .step .t { font-weight: 700; font-size: 0.92rem; }
+      .step .d { color: var(--muted); font-size: 0.8rem; margin-top: 0.15rem; }
+      .feat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+      .feat { background: var(--surface); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1rem; }
+      .feat .ico { color: var(--yellow); margin-bottom: 0.5rem; }
+      .feat h4 { font-family: "Anton"; text-transform: uppercase; font-size: 0.92rem; }
+      .feat p { color: var(--muted); font-size: 0.76rem; margin-top: 0.25rem; line-height: 1.4; }
+      .l-final { background: var(--yellow); color: #000; border-radius: 1rem; padding: 1.85rem 1.25rem; text-align: center; margin-top: 2.75rem; }
+      .l-final h3 { font-family: "Anton"; text-transform: uppercase; font-size: 1.7rem; line-height: 1; }
+      .l-final p { font-size: 0.85rem; font-weight: 600; margin-top: 0.5rem; }
+      .l-final .btn-fp { background: #000; color: var(--yellow); margin-top: 1.1rem; }
+      .sign { text-align: center; font-size: 0.62rem; color: var(--muted); margin-top: 2rem; opacity: 0.7; }
+
+      /* ============== AUTH ============== */
+      .auth { max-width: 26rem; margin: 0 auto; padding: 3rem 1.25rem; }
+      .auth .wordmark { text-align: center; display: block; font-size: 1.7rem; margin-bottom: 0.4rem; }
+      .auth .tag { text-align: center; color: var(--muted); font-size: 0.85rem; margin-bottom: 2rem; }
+      .tabs { display: flex; background: var(--surface); border-radius: 0.6rem; padding: 0.25rem; margin-bottom: 1.5rem; }
+      .tab { flex: 1; padding: 0.7rem; border-radius: 0.45rem; font-family: "Anton"; text-transform: uppercase; font-size: 0.85rem; color: var(--muted); transition: all 0.18s; }
+      .tab.active { background: var(--yellow); color: #000; }
+      .field { margin-bottom: 0.85rem; }
+      .field label { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.35rem; font-weight: 700; }
+      .field input { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 0.55rem; padding: 0.85rem; color: #fff; font-size: 0.95rem; }
+      .field input:focus { outline: none; border-color: var(--yellow); }
+      .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+      .auth-msg { text-align: center; font-size: 0.82rem; margin: 0.6rem 0; min-height: 1.2rem; }
+      .auth-msg.ok { color: var(--yellow); }
+      .auth-msg.err { color: #f87171; }
+      .auth-switch { text-align: center; color: var(--muted); font-size: 0.82rem; margin-top: 1rem; }
+      .auth-switch a { color: var(--yellow); font-weight: 700; cursor: pointer; }
+
+      /* ============== HEAD / AVATAR ============== */
+      .head { display: flex; align-items: center; justify-content: space-between; padding-top: 3rem; }
+      .head .sub { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--muted); }
+      .head h1 { font-family: "Anton"; font-size: 2rem; }
+      .ai-avatar { width: 56px; height: 56px; position: relative; display: grid; place-items: center; flex: none; }
+      .ai-avatar .halo { position: absolute; inset: 0; border-radius: 50%; background: rgba(255,236,0,0.2); filter: blur(12px); }
+      .ai-avatar .ring { position: absolute; inset: -4px; border-radius: 50%; border: 1px dashed rgba(255,236,0,0.4); animation: spin 8s linear infinite; }
+      .ai-avatar .core { width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(135deg, var(--yellow), var(--yellow-d)); display: grid; place-items: center; font-family: "Oxanium"; font-weight: 800; font-style: italic; color: #000; font-size: 1.1rem; }
+      .ai-avatar .dot { position: absolute; bottom: -1px; right: -1px; width: 12px; height: 12px; border-radius: 50%; background: #34d399; box-shadow: 0 0 0 2px var(--bg); }
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      /* ============== CARDS / ACCUEIL ============== */
+      .card { border-radius: 1.5rem; padding: 1.25rem; }
+      .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem; }
+      .stat-label { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.5rem; }
+      .bar-track { height: 12px; border-radius: 999px; background: #1c1c1c; overflow: hidden; }
+      .bar-fill { height: 100%; border-radius: 999px; background: var(--yellow); width: 0; animation: grow 0.9s 0.3s ease forwards; }
+      @keyframes grow { to { width: 75%; } }
+      .obj { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; padding-top: 0.25rem; }
+      .obj li { display: flex; align-items: center; gap: 0.35rem; }
+      .tick { width: 16px; height: 16px; border-radius: 50%; background: var(--yellow); display: grid; place-items: center; flex: none; color: #000; font-size: 9px; font-weight: 900; }
+      .obj li span:last-child { height: 4px; flex: 1; border-radius: 999px; background: #1c1c1c; }
+
+      .glow { position: relative; isolation: isolate; border-radius: 1rem; display: block; }
+      .glow::before, .glow::after { content: ""; position: absolute; border-radius: inherit; pointer-events: none; background: conic-gradient(from var(--angle), transparent 0%, var(--yellow) 25%, transparent 50%, transparent 70%, var(--yellow) 92%, transparent 100%); animation: spin-angle 4.5s linear infinite; }
+      .glow::before { inset: -7px; filter: blur(13px); opacity: 0.5; z-index: 0; }
+      .glow::after { inset: 0; padding: 1.5px; -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude; z-index: 1; }
+      @keyframes spin-angle { to { --angle: 360deg; } }
+      .glow > * { position: relative; z-index: 2; }
+      .sheen { position: relative; overflow: hidden; }
+      .sheen::after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 55%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent); animation: sheen 3.4s ease-in-out infinite; pointer-events: none; }
+      @keyframes sheen { 0% { transform: translateX(-180%) skewX(-14deg); } 60%, 100% { transform: translateX(280%) skewX(-14deg); } }
+
+      .cta { margin-top: 1.25rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; border-radius: 1rem; border: 1px solid rgba(255,236,0,0.4); background: rgba(14,14,14,0.6); padding: 1rem; color: var(--yellow); font-family: "Anton"; font-size: 0.95rem; text-transform: uppercase; transition: transform 0.12s; }
+      .cta:active { transform: scale(0.98); }
+      .btn-yellow { width: 100%; border-radius: 1rem; background: var(--yellow); color: #000; padding: 1rem; font-family: "Anton"; text-transform: uppercase; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: transform 0.12s; }
+      .btn-yellow:active { transform: scale(0.97); }
+
+      .section-title { display: flex; align-items: center; gap: 0.5rem; margin: 2rem 0 1rem; font-family: "Anton"; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; }
+      .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+      .reco { border-radius: 1rem; background: var(--yellow); overflow: hidden; transition: transform 0.12s; }
+      .reco:active { transform: scale(0.97); }
+      .reco .ph { aspect-ratio: 4/3; background: #000; overflow: hidden; }
+      .reco img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+      .reco p { padding: 0.6rem; font-family: "Anton"; font-size: 0.8rem; color: #000; line-height: 1.1; }
+
+      /* ============== ANALYSE ============== */
+      .topbar { display: flex; align-items: center; justify-content: space-between; padding-top: 2.5rem; margin-bottom: 1.1rem; }
+      .topbar h1 { font-family: "Anton"; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; }
+      .iconbtn { padding: 0.5rem; border-radius: 999px; display: grid; place-items: center; }
+      .zones { display: flex; gap: 0.5rem; overflow-x: auto; margin: 0 -1rem 1rem; padding: 0 1rem; scrollbar-width: none; }
+      .zones::-webkit-scrollbar { display: none; }
+      .zone { flex: none; border-radius: 999px; padding: 0.45rem 0.85rem; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #fff; border: 1px solid var(--border); transition: all 0.18s; }
+      .zone.active { background: var(--yellow); color: #000; border-color: var(--yellow); }
+      .frame { position: relative; width: 100%; aspect-ratio: 4/3; border-radius: 1rem; overflow: hidden; background: #141414; display: block; }
+      .frame img { width: 100%; height: 100%; object-fit: cover; }
+      .frame .placeholder-cam { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); }
+      .corner { position: absolute; width: 32px; height: 32px; border: 0 solid var(--yellow); }
+      .c-tl { top: 12px; left: 12px; border-top-width: 2px; border-left-width: 2px; }
+      .c-tr { top: 12px; right: 12px; border-top-width: 2px; border-right-width: 2px; }
+      .c-bl { bottom: 12px; left: 12px; border-bottom-width: 2px; border-left-width: 2px; }
+      .c-br { bottom: 12px; right: 12px; border-bottom-width: 2px; border-right-width: 2px; }
+      .scan { position: absolute; inset: 0; overflow: hidden; display: none; }
+      .scan.on { display: block; }
+      .scan .line { position: absolute; left: 0; right: 0; height: 2px; background: linear-gradient(180deg, transparent, var(--yellow), transparent); animation: scan 1.8s linear infinite; }
+      .scan .veil { position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: grid; place-items: center; }
+      .scan .veil span { display: flex; align-items: center; gap: 0.5rem; background: rgba(0,0,0,0.8); color: var(--yellow); padding: 0.5rem 1rem; border-radius: 999px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; }
+      @keyframes scan { 0% { transform: translateY(-10%); } 100% { transform: translateY(1000%); } }
+      .spin-i { animation: spin 1s linear infinite; }
+      .prog-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-top: 1.75rem; }
+      .prog-head h2 { font-family: "Anton"; font-size: 1rem; text-transform: uppercase; }
+      .badge { flex: none; background: var(--yellow); color: #000; border-radius: 999px; padding: 0.15rem 0.5rem; font-size: 0.62rem; font-weight: 800; text-transform: uppercase; }
+      .ai-summary { margin-top: 0.75rem; border-radius: 1rem; padding: 1rem; }
+      .ai-summary .lbl { display: flex; align-items: center; gap: 0.5rem; color: var(--yellow); font-family: "Anton"; font-size: 0.78rem; text-transform: uppercase; margin-bottom: 0.4rem; }
+      .ai-summary p { font-size: 0.88rem; line-height: 1.55; color: var(--muted); }
+      .ex-list { margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.75rem; }
+      .ex { border-radius: 1rem; background: var(--yellow); color: #000; padding: 1rem; display: flex; gap: 0.75rem; animation: fade 0.4s ease both; }
+      .ex .ico { width: 48px; height: 48px; border-radius: 0.75rem; background: #000; display: grid; place-items: center; flex: none; color: var(--yellow); }
+      .ex h3 { font-size: 1rem; font-weight: 800; }
+      .ex .muscle { display: inline-block; margin-top: 0.25rem; background: #000; color: var(--yellow); border-radius: 999px; padding: 0.1rem 0.5rem; font-size: 0.62rem; font-weight: 800; text-transform: uppercase; }
+      .ex .sets { margin-top: 0.3rem; font-size: 0.85rem; font-weight: 600; }
+      .ex .sets .rest { margin-left: 0.5rem; opacity: 0.7; }
+      .ex .desc { margin-top: 0.5rem; font-size: 0.78rem; line-height: 1.5; }
+      .placeholder, .errbox { border-radius: 1rem; padding: 1.5rem; text-align: center; font-size: 0.85rem; color: var(--muted); }
+      .errbox { color: #e9e9e9; padding: 1.5rem; font-size: 0.92rem; line-height: 1.6; }
+      .errbox .ico { color: var(--yellow); display: flex; justify-content: center; margin-bottom: 0.6rem; }
+      .tips { margin-top: 1rem; border-radius: 1rem; padding: 1rem; }
+      .tips h3 { font-family: "Anton"; font-size: 0.78rem; text-transform: uppercase; color: var(--yellow); margin-bottom: 0.5rem; }
+      .tips ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+      .tips li { display: flex; gap: 0.5rem; align-items: flex-start; font-size: 0.85rem; color: var(--muted); }
+
+      /* ============== PROGRAMME / SUIVI / PROFIL ============== */
+      .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-top: 1.25rem; }
+      .tile { border-radius: 1rem; padding: 0.75rem; text-align: center; }
+      .tile .v { font-family: "Anton"; font-size: 1rem; margin-top: 0.25rem; }
+      .tile .l { font-size: 0.6rem; text-transform: uppercase; color: var(--muted); }
+      .chart { margin-top: 1.5rem; border-radius: 1.5rem; padding: 1.25rem; }
+      .chart .top { display: flex; align-items: flex-end; justify-content: space-between; }
+      .chart .big { font-family: "Anton"; font-size: 2.25rem; color: var(--yellow); }
+      .chart .delta { background: rgba(255,236,0,0.15); color: var(--yellow); border-radius: 999px; padding: 0.25rem 0.5rem; font-size: 0.72rem; font-weight: 700; }
+      .bars { display: flex; align-items: flex-end; justify-content: space-between; gap: 0.5rem; height: 128px; margin-top: 1.5rem; }
+      .bars .col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; height: 100%; justify-content: flex-end; }
+      .bars .b { width: 100%; border-radius: 0.5rem 0.5rem 0 0; background: linear-gradient(to top, rgba(255,236,0,0.3), var(--yellow)); height: 0; transition: height 0.7s cubic-bezier(0.22,1,0.36,1); }
+      .bars .d { font-size: 0.62rem; color: var(--muted); }
+      .grid2.m5 { margin-top: 1.25rem; }
+      .metric { border-radius: 1rem; padding: 1rem; }
+      .metric .l { font-size: 0.6rem; text-transform: uppercase; color: var(--muted); }
+      .metric .v { font-family: "Anton"; font-size: 1.5rem; margin-top: 0.25rem; }
+      .metric .s { font-size: 0.6rem; color: var(--muted); }
+      .profile { border-radius: 1.5rem; padding: 1.5rem; text-align: center; margin-top: 3rem; }
+      .avatar-xl { width: 80px; height: 80px; margin: 0 auto; border-radius: 50%; background: linear-gradient(135deg, var(--yellow), var(--yellow-d)); display: grid; place-items: center; font-family: "Anton"; font-size: 1.6rem; color: #000; }
+      .profile h1 { font-family: "Anton"; margin-top: 0.75rem; font-size: 1.5rem; }
+      .mini3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-top: 1rem; }
+      .mini { background: rgba(0,0,0,0.4); border-radius: 0.75rem; padding: 0.5rem; text-align: center; }
+      .mini .v { font-family: "Anton"; font-size: 1.2rem; color: var(--yellow); }
+      .mini .l { font-size: 0.58rem; text-transform: uppercase; color: var(--muted); }
+      .settings-title { font-family: "Anton"; text-transform: uppercase; font-size: 0.85rem; margin: 1.5rem 0 0.75rem; color: var(--muted); }
+      .logout { width: 100%; margin-top: 1rem; border: 1px solid var(--border); border-radius: 0.75rem; padding: 0.9rem; color: #f87171; font-weight: 700; text-transform: uppercase; font-size: 0.82rem; letter-spacing: 0.04em; }
+
+      /* ============== CHAT ============== */
+      .chat-screen.active { display: flex; flex-direction: column; height: 100dvh; }
+      .chat-head { display: flex; align-items: center; justify-content: space-between; padding: 2.5rem 1rem 1rem; border-bottom: 1px solid var(--border); flex: none; }
+      .chat-head h1 { font-family: "Anton"; text-transform: uppercase; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem; }
+      .ctx-chip { margin: 0.75rem 1rem 0; background: var(--surface); border: 1px solid var(--border); border-radius: 0.6rem; padding: 0.6rem 0.85rem; font-size: 0.75rem; color: var(--muted); display: flex; gap: 0.5rem; align-items: center; flex: none; }
+      .ctx-chip .y { color: var(--yellow); font-weight: 700; }
+      .chat-msgs { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+      .msg { max-width: 82%; padding: 0.75rem 1rem; border-radius: 1rem; font-size: 0.9rem; line-height: 1.55; white-space: pre-wrap; }
+      .msg.user { align-self: flex-end; background: var(--yellow); color: #000; border-bottom-right-radius: 0.25rem; }
+      .msg.bot { align-self: flex-start; background: var(--surface2); color: #fff; border-bottom-left-radius: 0.25rem; }
+      .msg.typing { color: var(--muted); font-style: italic; }
+      .chat-bar { display: flex; gap: 0.5rem; padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); flex: none; }
+      .chat-bar input { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 0.85rem 1rem; color: #fff; }
+      .chat-bar input:focus { outline: none; border-color: var(--yellow); }
+      .chat-send { width: 48px; height: 48px; border-radius: 50%; background: var(--yellow); color: #000; display: grid; place-items: center; flex: none; }
+      .history { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 60; display: none; }
+      .history.on { display: block; }
+      .history .panel { position: absolute; top: 0; right: 0; bottom: 0; width: 82%; max-width: 20rem; background: var(--surface); border-left: 1px solid var(--border); padding: 2.5rem 1rem 1rem; overflow-y: auto; }
+      .history h3 { font-family: "Anton"; text-transform: uppercase; margin-bottom: 1rem; }
+      .new-conv { width: 100%; background: var(--yellow); color: #000; border-radius: 0.6rem; padding: 0.75rem; font-family: "Anton"; text-transform: uppercase; margin-bottom: 1rem; }
+      .conv-item { width: 100%; text-align: left; background: var(--surface2); border: 1px solid var(--border); border-radius: 0.6rem; padding: 0.75rem; margin-bottom: 0.5rem; }
+      .conv-item.active { border-color: var(--yellow); }
+      .conv-item .t { font-weight: 600; font-size: 0.85rem; }
+      .conv-item .d { font-size: 0.68rem; color: var(--muted); margin-top: 0.2rem; }
+
+      /* ============== NAV ============== */
+      .nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; pointer-events: none; display: none; }
+      .nav .wrap { max-width: 28rem; margin: 0 auto; padding: 0 1rem 1rem; position: relative; }
+      .nav .bar { pointer-events: auto; height: 80px; border-radius: 1.75rem; display: flex; align-items: center; justify-content: space-around; padding: 0 0.5rem; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+      .nav .gap { width: 64px; }
+      .navitem { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.25rem; padding: 0.5rem 0; color: #ffffff; transition: color 0.18s; }
+      .navitem .t { font-size: 10px; font-weight: 600; }
+      .navitem.active { color: var(--yellow); }
+      .fab { pointer-events: auto; position: absolute; left: 50%; top: 0; transform: translate(-50%, -50%); width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(to bottom, var(--yellow), var(--yellow-d)); display: grid; place-items: center; isolation: isolate; box-shadow: 0 8px 22px rgba(255,236,0,0.4), inset 0 -4px 10px rgba(0,0,0,0.25), inset 0 4px 10px rgba(255,255,255,0.4); transition: transform 0.12s; }
+      .fab::before { content: ""; position: absolute; inset: -4px; border-radius: 50%; padding: 2px; background: conic-gradient(from var(--angle), transparent 0deg 210deg, #ffffff 285deg, var(--yellow) 330deg, transparent 360deg); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude; animation: spin-angle 3s linear infinite; z-index: 0; pointer-events: none; }
+      .fab:active { transform: translate(-50%, -50%) scale(0.92); }
+      .fab .inner { position: relative; z-index: 1; width: 64px; height: 64px; border-radius: 50%; background: #000; display: grid; place-items: center; }
+      .fab .inner span { font-family: "Oxanium"; font-weight: 800; font-style: italic; color: var(--yellow); font-size: 1.5rem; }
+
+      .toast { position: fixed; left: 50%; bottom: 6rem; transform: translateX(-50%) translateY(20px); background: var(--yellow); color: #000; font-weight: 700; padding: 0.6rem 1.1rem; border-radius: 999px; font-size: 0.85rem; opacity: 0; pointer-events: none; transition: all 0.3s; z-index: 80; }
+      .toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+      /* ===== Checkbox Uiverse (recodée vanilla, jaune Fitness Park) ===== */
+      .fp-check { position: relative; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; margin: 0.25rem 0 1rem; }
+      .fp-check input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+      .fp-check .box { width: 32px; height: 32px; flex: none; border-radius: 0.5rem; background: #fff; border: 2px solid var(--yellow); transition: all 0.3s ease-in-out; position: relative; }
+      .fp-check .box::after { content: ""; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; opacity: 0; background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cG9seWxpbmUgcG9pbnRzPSIyMCA2IDkgMTcgNCAxMiI+PC9wb2x5bGluZT48L3N2Zz4=") center / contain no-repeat; transition: opacity 0.3s; }
+      .fp-check input:checked + .box { background: linear-gradient(135deg, var(--yellow), var(--yellow-d)); border-color: transparent; transform: rotate(12deg); }
+      .fp-check input:checked + .box::after { opacity: 1; }
+      .fp-check:hover .box { box-shadow: 0 0 15px rgba(255, 236, 0, 0.5); }
+      .fp-check input:focus-visible + .box { box-shadow: 0 0 0 3px rgba(255, 236, 0, 0.4); }
+      .fp-check .lbl { font-size: 0.82rem; font-weight: 500; color: #fff; line-height: 1.35; }
+      .fp-check .lbl a { color: var(--yellow); font-weight: 700; }
+
+      /* ===== Loader honeycomb (Uiverse à l'identique, jaune FP) + overlay iOS ===== */
+      .loader-overlay { position: fixed; inset: 0; z-index: 90; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 3rem; background: rgba(0, 0, 0, 0.82); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); }
+      .loader-overlay.on { display: flex; animation: fade 0.25s ease both; }
+      .loader-overlay .txt { font-family: "Anton"; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.95rem; color: var(--yellow); }
+      @-webkit-keyframes honeycomb { 0%, 20%, 80%, 100% { opacity: 0; -webkit-transform: scale(0); transform: scale(0); } 30%, 70% { opacity: 1; -webkit-transform: scale(1); transform: scale(1); } }
+      @keyframes honeycomb { 0%, 20%, 80%, 100% { opacity: 0; -webkit-transform: scale(0); transform: scale(0); } 30%, 70% { opacity: 1; -webkit-transform: scale(1); transform: scale(1); } }
+      .honeycomb { height: 24px; position: relative; width: 24px; }
+      .honeycomb div { -webkit-animation: honeycomb 2.1s infinite backwards; animation: honeycomb 2.1s infinite backwards; background: #ffec00; height: 12px; margin-top: 6px; position: absolute; width: 24px; }
+      .honeycomb div:after, .honeycomb div:before { content: ""; border-left: 12px solid transparent; border-right: 12px solid transparent; position: absolute; left: 0; right: 0; }
+      .honeycomb div:after { top: -6px; border-bottom: 6px solid #ffec00; }
+      .honeycomb div:before { bottom: -6px; border-top: 6px solid #ffec00; }
+      .honeycomb div:nth-child(1) { -webkit-animation-delay: 0s; animation-delay: 0s; left: -28px; top: 0; }
+      .honeycomb div:nth-child(2) { -webkit-animation-delay: 0.1s; animation-delay: 0.1s; left: -14px; top: 22px; }
+      .honeycomb div:nth-child(3) { -webkit-animation-delay: 0.2s; animation-delay: 0.2s; left: 14px; top: 22px; }
+      .honeycomb div:nth-child(4) { -webkit-animation-delay: 0.3s; animation-delay: 0.3s; left: 28px; top: 0; }
+      .honeycomb div:nth-child(5) { -webkit-animation-delay: 0.4s; animation-delay: 0.4s; left: 14px; top: -22px; }
+      .honeycomb div:nth-child(6) { -webkit-animation-delay: 0.5s; animation-delay: 0.5s; left: -14px; top: -22px; }
+      .honeycomb div:nth-child(7) { -webkit-animation-delay: 0.6s; animation-delay: 0.6s; left: 0; top: 0; }
+
+      @media (prefers-reduced-motion: reduce) { * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; } }
+    </style>
+  </head>
+  <body>
+    <!-- ===================== LANDING ===================== -->
+    <section class="screen landing" data-route="/landing">
+      <div class="l-top">
+        <span class="wordmark">AI<span class="y"> FITNESS</span></span>
+        <a class="l-login" href="#/auth" data-auth="login">Se connecter</a>
+      </div>
+      <span class="hero-kicker">IA révolutionnaire · +5M de données d'experts</span>
+      <h1 class="hero-title">Perds enfin tes kilos <span class="y">selon ton anatomie</span></h1>
+      <p class="hero-sub">Prends-toi en photo. Notre IA analyse ton corps et conçoit un programme sur-mesure, plus précis que n'importe quelle salle de sport ou coach. Ton coach IA, dans ta poche, 24/7.</p>
+      <div class="l-cta">
+        <a class="btn-fp primary" href="#/auth" data-auth="signup">Créer mon compte</a>
+        <a class="btn-fp ghost" href="#/auth" data-auth="login">Se connecter</a>
+      </div>
+      <div class="badges">
+        <span class="badge-fp"><span class="y">+5M</span> données d'experts</span>
+        <span class="badge-fp"><span class="y">100%</span> selon ton anatomie</span>
+        <span class="badge-fp"><span class="y">24/7</span> coach IA</span>
+      </div>
+
+      <h2 class="l-sec-t">3 étapes, <span class="y">zéro excuse</span></h2>
+      <div class="steps">
+        <div class="step"><span class="num">1</span><div><div class="t">Prends-toi en photo</div><div class="d">Ton corps, ta posture ou la zone à travailler.</div></div></div>
+        <div class="step"><span class="num">2</span><div><div class="t">L'IA analyse ton anatomie</div><div class="d">Entraînée sur +5M de données d'experts du sport.</div></div></div>
+        <div class="step"><span class="num">3</span><div><div class="t">Reçois ton programme</div><div class="d">Sur-mesure, ciblé, avec ton coach IA pour t'épauler.</div></div></div>
+      </div>
+
+      <h2 class="l-sec-t">Tout ce que <span class="y">les salles n'ont pas</span></h2>
+      <div class="feat-grid">
+        <div class="feat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div><h4>Analyse photo IA</h4><p>Ton corps lu en quelques secondes.</p></div>
+        <div class="feat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><h4>Programme ciblé</h4><p>Adapté à ton anatomie, pas générique.</p></div>
+        <div class="feat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/></svg></div><h4>Coach IA 24/7</h4><p>Pose tes questions à tout moment.</p></div>
+        <div class="feat"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg></div><h4>Suivi de progression</h4><p>Vois tes progrès semaine après semaine.</p></div>
+      </div>
+
+      <div class="l-final">
+        <h3>Mieux que toutes les salles de sport</h3>
+        <p>Rejoins l'entraînement du futur. Gratuit pour commencer.</p>
+        <a class="btn-fp" href="#/auth" data-auth="signup">Je commence maintenant</a>
+      </div>
+      <p class="sign">@ By Brice Jct · Alpha OS · Groupe Alpha Nex Strasbourg</p>
+    </section>
+
+    <!-- ===================== AUTH ===================== -->
+    <section class="screen auth" data-route="/auth">
+      <span class="wordmark" style="text-align:center;display:block">AI<span class="y"> FITNESS</span></span>
+      <p class="tag">Ton coach IA personnel</p>
+      <div class="tabs">
+        <button class="tab active" id="tab-login" onclick="showAuth('login')">Connexion</button>
+        <button class="tab" id="tab-signup" onclick="showAuth('signup')">Inscription</button>
+      </div>
+
+      <form id="form-login" onsubmit="return false">
+        <div class="field"><label>E-mail</label><input id="li-mail" type="email" autocomplete="email" placeholder="ton@mail.com" /></div>
+        <div class="field"><label>Mot de passe</label><input id="li-pass" type="password" autocomplete="current-password" placeholder="••••••••" /></div>
+        <div class="auth-msg" id="msg-login"></div>
+        <button class="btn-fp primary" style="width:100%" onclick="doLogin()">Se connecter</button>
+        <p class="auth-switch">Pas encore de compte ? <a onclick="showAuth('signup')">Inscris-toi</a></p>
+      </form>
+
+      <form id="form-signup" style="display:none" onsubmit="return false">
+        <div class="row2">
+          <div class="field"><label>Prénom</label><input id="su-prenom" placeholder="Alex" /></div>
+          <div class="field"><label>Nom</label><input id="su-nom" placeholder="Morin" /></div>
+        </div>
+        <div class="field"><label>Téléphone</label><input id="su-tel" type="tel" placeholder="06 12 34 56 78" /></div>
+        <div class="field"><label>E-mail</label><input id="su-mail" type="email" autocomplete="email" placeholder="ton@mail.com" /></div>
+        <div class="row2">
+          <div class="field"><label>Âge</label><input id="su-age" type="number" placeholder="28" /></div>
+          <div class="field"><label>Poids (kg)</label><input id="su-poids" type="number" placeholder="75" /></div>
+        </div>
+        <div class="field"><label>Mot de passe</label><input id="su-pass" type="password" autocomplete="new-password" placeholder="••••••••" /></div>
+        <label class="fp-check">
+          <input id="su-cgu" type="checkbox" />
+          <span class="box"></span>
+          <span class="lbl">J'accepte les <a href="#" onclick="return false">conditions d'utilisation</a> et la politique de confidentialité.</span>
+        </label>
+        <div class="auth-msg" id="msg-signup"></div>
+        <button class="btn-fp primary" style="width:100%" onclick="doSignup()">Créer mon compte</button>
+        <p class="auth-switch">Déjà inscrit ? <a onclick="showAuth('login')">Connecte-toi</a></p>
+      </form>
+    </section>
+
+    <!-- ===================== APP ===================== -->
+    <div class="app">
+      <!-- ACCUEIL -->
+      <section class="screen" data-route="/">
+        <header class="head">
+          <div><p class="sub">Bienvenue</p><h1>Bonjour, <span class="text-y" id="hello">Champion</span></h1></div>
+          <div class="ai-avatar"><span class="halo"></span><span class="ring"></span><span class="core">iA</span><span class="dot"></span></div>
+        </header>
+        <div class="glass card" style="margin-top:1.5rem">
+          <div class="stats">
+            <div>
+              <p class="stat-label">Progrès semaine</p>
+              <svg viewBox="0 0 64 64" width="64" height="64">
+                <circle cx="32" cy="32" r="26" fill="none" stroke="rgba(255,236,0,0.22)" stroke-width="6" />
+                <circle id="ring" cx="32" cy="32" r="26" fill="none" stroke="var(--yellow)" stroke-width="6" stroke-linecap="round" stroke-dasharray="163.36" stroke-dashoffset="163.36" transform="rotate(-90 32 32)" style="filter:drop-shadow(0 0 4px rgba(255,236,0,0.55))" />
+                <text id="ring-pct" x="32" y="37" text-anchor="middle" font-size="15" font-weight="800" fill="var(--yellow)" font-family="Oxanium">0%</text>
+              </svg>
+            </div>
+            <div>
+              <p class="stat-label">Dernière séance</p>
+              <div style="display:flex;align-items:center;height:64px"><div class="bar-track" style="width:100%"><div class="bar-fill"></div></div></div>
+            </div>
+            <div>
+              <p class="stat-label">Objectifs</p>
+              <ul class="obj"><li><span class="tick">✓</span><span></span></li><li><span class="tick">✓</span><span></span></li><li><span class="tick">✓</span><span></span></li></ul>
+            </div>
+          </div>
+        </div>
+        <a class="glow" href="#/analyse" style="margin-top:1.25rem">
+          <div class="cta sheen">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>Nouvelle Analyse</span>
+          </div>
+        </a>
+        <div class="section-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="text-y"><path d="M12 2c1 3 3 5 6 6-3 1-5 3-6 6-1-3-3-5-6-6 3-1 5-3 6-6z"/></svg>
+          <span>Recommandations IA</span>
+        </div>
+        <div class="grid2" id="recos"></div>
+      </section>
+
+      <!-- ANALYSE -->
+      <section class="screen" data-route="/analyse">
+        <div class="topbar">
+          <a class="iconbtn" href="#/" style="margin-left:-0.5rem"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <h1>Analyse de ta photo</h1><span style="width:24px"></span>
+        </div>
+        <div class="zones" id="zones"></div>
+        <button class="frame" id="frame">
+          <div class="placeholder-cam" id="frame-ph"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+          <img id="frame-img" alt="" style="display:none" />
+          <span class="corner c-tl"></span><span class="corner c-tr"></span><span class="corner c-bl"></span><span class="corner c-br"></span>
+          <div class="scan" id="scan"><div class="line"></div><div class="veil"><span><svg class="spin-i" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Analyse IA en cours…</span></div></div>
+        </button>
+        <input id="file" type="file" accept="image/*" capture="environment" style="display:none" />
+        <p class="muted" id="hint" style="text-align:center;font-size:0.75rem;margin-top:0.75rem">Touche la zone pour prendre ou choisir une photo</p>
+        <div class="prog-head"><h2>Ton programme</h2><span class="badge" id="zone-badge" style="display:none"></span></div>
+        <div class="glass ai-summary" id="summary" style="display:none"><div class="lbl"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3 3 5 6 6-3 1-5 3-6 6-1-3-3-5-6-6 3-1 5-3 6-6z"/></svg><span>Analyse IA</span></div><p id="summary-text"></p></div>
+        <div class="ex-list" id="ex-list"></div>
+        <div class="glass placeholder" id="placeholder">Choisis la zone à travailler, puis importe une photo pour générer ton programme sur-mesure.</div>
+        <div class="glass errbox" id="errbox" style="display:none"></div>
+        <div class="glass tips" id="tips" style="display:none"><h3>Pour aller plus loin</h3><ul id="tips-list"></ul></div>
+        <a class="glow" href="#/chat" style="margin-top:1.25rem"><div class="btn-yellow sheen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/></svg> Chat avec l'IA</div></a>
+        <div style="height:6rem"></div>
+      </section>
+
+      <!-- PROGRAMME -->
+      <section class="screen" data-route="/programme">
+        <header class="head"><div><p class="sub">Aujourd'hui</p><h1>Mon <span class="text-y">Programme</span></h1></div></header>
+        <div class="tiles">
+          <div class="glass tile"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" style="margin:0 auto"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><div class="v">32 min</div><div class="l">Durée</div></div>
+          <div class="glass tile"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--yellow)" style="margin:0 auto"><path d="M12 2c1 4 4 5 4 9a4 4 0 0 1-8 0c0-2 1-3 2-4 1 2 2 2 2-5z"/></svg><div class="v">~280</div><div class="l">Calories</div></div>
+          <div class="glass tile"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" style="margin:0 auto"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><div class="v" id="prog-count">4</div><div class="l">Exos</div></div>
+        </div>
+        <div class="ex-list" id="prog-list" style="margin-top:1.5rem"></div>
+      </section>
+
+      <!-- SUIVI -->
+      <section class="screen" data-route="/suivi">
+        <header class="head"><div><p class="sub">Statistiques</p><h1>Ton <span class="text-y">Suivi</span></h1></div></header>
+        <div class="glass chart">
+          <div class="top"><div><p class="muted" style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em">Cette semaine</p><p class="big">4h 32m</p></div><span class="delta">+18%</span></div>
+          <div class="bars" id="bars"></div>
+        </div>
+        <div class="grid2 m5" id="metrics"></div>
+      </section>
+
+      <!-- PROFIL -->
+      <section class="screen" data-route="/profil">
+        <div class="glass profile">
+          <div class="avatar-xl" id="pf-initials">AX</div>
+          <h1 id="pf-name">Alex Morin</h1>
+          <p class="muted" id="pf-mail" style="font-size:0.75rem">ton@mail.com</p>
+          <div class="mini3">
+            <div class="mini"><div class="v" id="pf-level">0</div><div class="l">Niveau</div></div>
+            <div class="mini"><div class="v" id="pf-sessions">0</div><div class="l">Séances</div></div>
+            <div class="mini"><div class="v" id="pf-progress">0%</div><div class="l">Progrès</div></div>
+          </div>
+        </div>
+        <p class="settings-title">Mes informations</p>
+        <div class="row2">
+          <div class="field"><label>Prénom</label><input id="pf-prenom" /></div>
+          <div class="field"><label>Nom</label><input id="pf-nom" /></div>
+        </div>
+        <div class="field"><label>Téléphone</label><input id="pf-tel" type="tel" /></div>
+        <div class="row2">
+          <div class="field"><label>Âge</label><input id="pf-age" type="number" /></div>
+          <div class="field"><label>Poids (kg)</label><input id="pf-poids" type="number" /></div>
+        </div>
+        <button class="btn-fp primary" style="width:100%" onclick="saveProfil()">Enregistrer</button>
+        <button class="logout" onclick="logout()">Se déconnecter</button>
+        <div style="height:1rem"></div>
+      </section>
+    </div>
+
+    <!-- ===================== CHAT ===================== -->
+    <section class="screen chat-screen" data-route="/chat">
+      <div class="chat-head">
+        <a class="iconbtn" href="#/analyse"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></a>
+        <h1><span class="text-y">iA</span> Coach</h1>
+        <button class="iconbtn" onclick="toggleHistory(true)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg></button>
+      </div>
+      <div class="ctx-chip" id="ctx-chip" style="display:none"></div>
+      <div class="chat-msgs" id="chat-msgs"></div>
+      <div class="chat-bar">
+        <input id="chat-input" placeholder="Demande un conseil sur tes exos…" />
+        <button class="chat-send" onclick="sendChat()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg></button>
+      </div>
+    </section>
+
+    <div class="history" id="history" onclick="if(event.target===this)toggleHistory(false)">
+      <div class="panel">
+        <h3>Mes conversations</h3>
+        <button class="new-conv" onclick="startNewConv()">+ Nouvelle conversation</button>
+        <div id="conv-list"></div>
+      </div>
+    </div>
+
+    <!-- ===================== NAV ===================== -->
+    <nav class="nav">
+      <div class="wrap">
+        <div class="glass bar">
+          <a class="navitem" href="#/" data-nav="/"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg><span class="t">Accueil</span></a>
+          <a class="navitem" href="#/programme" data-nav="/programme"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.5 6.5l11 11M21 21l-1-1M3 3l1 1M18 22l4-4M2 6l4-4"/></svg><span class="t">Programme</span></a>
+          <span class="gap"></span>
+          <a class="navitem" href="#/suivi" data-nav="/suivi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg><span class="t">Suivi</span></a>
+          <a class="navitem" href="#/profil" data-nav="/profil"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="t">Profil</span></a>
+        </div>
+        <a class="fab" href="#/analyse"><span class="inner"><span>iA</span></span></a>
+      </div>
+    </nav>
+
+    <div class="loader-overlay" id="loader" aria-hidden="true">
+      <div class="honeycomb"><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+      <p class="txt">L'IA analyse ta photo…</p>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      /* ===================== CONFIG GEMINI ===================== */
+      const GEMINI_API_KEY = "AQ.Ab8RN6LiBZxog5-UDOodfNSJOxd8_Wjd-hdrbxxnj5jxAu4BQQ";
+      const USE_PROXY = false;
+      const PROXY_URL = "";
+      const MODELS = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash-latest"];
+      const endpointFor = (model) => "https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent";
+      const RETRYABLE = [429, 500, 502, 503, 504];
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const ERR_ANALYSE = "Malheureusement, nous rencontrons des difficultés en raison du nombre de personnes qui envoient leurs photos en ce moment.\n\nMerci de revenir d'ici quelques secondes.\n\nMerci de votre compréhension.";
+      const ERR_CHAT = "Malheureusement, le coach reçoit énormément de demandes en ce moment.\n\nMerci de réessayer d'ici quelques secondes.\n\nMerci de votre compréhension.";
+      // Appel Gemini robuste : réessais avec backoff + bascule automatique de modèle en cas de surcharge (503/429/5xx)
+      async function geminiFetch(body) {
+        let last = "";
+        for (const model of MODELS) {
+          for (let attempt = 0; attempt < 2; attempt++) {
+            let res;
+            try {
+              res = await fetch(endpointFor(model), { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": GEMINI_API_KEY }, body: JSON.stringify(body) });
+            } catch (netErr) { last = "réseau"; await sleep(600 * (attempt + 1)); continue; }
+            if (res.ok) return await res.json();
+            last = "Gemini " + res.status; console.warn(last, "· modèle", model, "· essai", attempt + 1);
+            if (RETRYABLE.includes(res.status)) { await sleep(700 * (attempt + 1)); continue; }
+            const t = await res.text(); throw new Error("Gemini " + res.status + " — " + t.slice(0, 160));
+          }
+        }
+        throw new Error(last || "Gemini indisponible");
+      }
+      const PROGRESS_PER_REQUEST = 2;
+
+      /* ===================== HELPERS ===================== */
+      const $ = (s) => document.querySelector(s);
+      const $$ = (s) => document.querySelectorAll(s);
+      const esc = (v) => String(v == null ? "" : v).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+      async function sha256(str) {
+        const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+        return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+      }
+      let toastTimer = null;
+      function toast(msg) {
+        const t = $("#toast"); t.textContent = msg; t.classList.add("on");
+        clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("on"), 1800);
+      }
+
+      /* ===================== STORE (localStorage, prêt Supabase) ===================== */
+      const Store = {
+        k: (e) => "nx_user_" + e.toLowerCase(),
+        session: () => localStorage.getItem("nx_session"),
+        setSession: (e) => localStorage.setItem("nx_session", e.toLowerCase()),
+        clearSession: () => localStorage.removeItem("nx_session"),
+        exists(e) { return !!localStorage.getItem(this.k(e)); },
+        get(e) { if (!e) return null; try { return JSON.parse(localStorage.getItem(this.k(e))); } catch (x) { return null; } },
+        save(u) { localStorage.setItem(this.k(u.email), JSON.stringify(u)); },
+        async create(d) {
+          const u = {
+            email: d.mail.toLowerCase(), prenom: d.prenom, nom: d.nom, tel: d.tel,
+            age: d.age, poids: d.poids, passHash: await sha256(d.password),
+            progress: 0, sessions: 0, lastProgram: null, conversations: [], createdAt: Date.now(),
+          };
+          this.save(u); return u;
+        },
+        async verify(e, p) { const u = this.get(e); if (!u) return null; const h = await sha256(p); return u.passHash === h ? u : false; },
+      };
+      let CU = null; // utilisateur courant
+
+      /* ===================== DONNÉES STATIQUES ===================== */
+      const RECOS = [
+        { t: "Analyse Posture: Squats", img: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=600&auto=format&fit=crop" },
+        { t: "Circuit Cardio: Débutant", img: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&auto=format&fit=crop" },
+        { t: "Force Haut du Corps", img: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=600&auto=format&fit=crop" },
+        { t: "Récupération Active", img: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&auto=format&fit=crop" },
+      ];
+      const PROGRAMME = [
+        { title: "Squats au poids du corps", muscle: "Quadriceps", sets: "3 séries de 12 rep", rest: "60s", description: "Squat fonctionnel, contrôle de la descente et profondeur." },
+        { title: "Pompes classiques", muscle: "Pectoraux", sets: "4 séries de 8-10 rep", rest: "90s", description: "Pectoraux, triceps et gainage du tronc." },
+        { title: "Fentes alternées", muscle: "Fessiers", sets: "3 séries de 10 rep/jambe", rest: "60s", description: "Travail unilatéral des quadriceps et fessiers." },
+        { title: "Gainage planche", muscle: "Abdominaux", sets: "3 séries de 45s", rest: "30s", description: "Gainage isométrique de la sangle abdominale." },
+      ];
+      const ZONES = [
+        { id: "auto", label: "Auto" }, { id: "jambes", label: "Jambes" }, { id: "pectoraux", label: "Pecs" },
+        { id: "dos", label: "Dos" }, { id: "bras", label: "Bras" }, { id: "épaules", label: "Épaules" },
+        { id: "abdos", label: "Abdos" }, { id: "full", label: "Full body" },
+      ];
+      const WEEK = [40, 70, 55, 90, 60, 80, 45];
+      const DAYS = ["L", "M", "M", "J", "V", "S", "D"];
+      const METRICS = [
+        { l: "Séances", v: "24", s: "ce mois" }, { l: "Calories", v: "8 240", s: "kcal" },
+        { l: "Record squat", v: "85 kg", s: "1RM" }, { l: "Régularité", v: "92%", s: "objectif" },
+      ];
+
+      /* ===================== RENDU STATIQUE ===================== */
+      $("#recos").innerHTML = RECOS.map((r) => '<button class="reco"><div class="ph"><img src="' + esc(r.img) + '" alt="' + esc(r.t) + '" loading="lazy"></div><p>' + esc(r.t) + "</p></button>").join("");
+      $("#bars").innerHTML = WEEK.map((v, i) => '<div class="col"><div class="b" data-h="' + v + '"></div><span class="d">' + DAYS[i] + "</span></div>").join("");
+      $("#metrics").innerHTML = METRICS.map((m) => '<div class="glass metric"><p class="l">' + m.l + '</p><p class="v">' + m.v + '</p><p class="s">' + m.s + "</p></div>").join("");
+
+      function exCard(ex) {
+        return '<div class="ex"><div class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg></div><div>' +
+          "<h3>" + esc(ex.title) + "</h3>" +
+          (ex.muscle ? '<span class="muscle">' + esc(ex.muscle) + "</span>" : "") +
+          (ex.sets ? '<p class="sets">' + esc(ex.sets) + (ex.rest ? '<span class="rest">Repos: ' + esc(ex.rest) + "</span>" : "") + "</p>" : "") +
+          (ex.description ? '<p class="desc">' + esc(ex.description) + "</p>" : "") +
+          "</div></div>";
+      }
+
+      /* ===================== ZONES ===================== */
+      let currentZone = "auto";
+      let lastImage = null;
+      $("#zones").innerHTML = ZONES.map((z) => '<button class="zone' + (z.id === "auto" ? " active" : "") + '" data-zone="' + z.id + '">' + z.label + "</button>").join("");
+      $("#zones").addEventListener("click", (e) => {
+        const b = e.target.closest(".zone"); if (!b) return;
+        currentZone = b.dataset.zone;
+        $$(".zone").forEach((z) => z.classList.toggle("active", z === b));
+        if (lastImage && !analyzing) runAnalysis(lastImage, currentZone);
+      });
+
+      /* ===================== AUTH ===================== */
+      function showAuth(mode) {
+        $("#tab-login").classList.toggle("active", mode === "login");
+        $("#tab-signup").classList.toggle("active", mode === "signup");
+        $("#form-login").style.display = mode === "login" ? "block" : "none";
+        $("#form-signup").style.display = mode === "signup" ? "block" : "none";
+        $("#msg-login").textContent = ""; $("#msg-signup").textContent = "";
+      }
+      function authMsg(id, text, ok) {
+        const el = $(id); el.textContent = text;
+        el.className = "auth-msg " + (ok ? "ok" : "err");
+      }
+      async function doLogin() {
+        const email = $("#li-mail").value.trim(); const pass = $("#li-pass").value;
+        if (!email || !pass) { authMsg("#msg-login", "Renseigne ton mail et ton mot de passe."); return; }
+        const u = await Store.verify(email, pass);
+        if (u === null) {
+          authMsg("#msg-login", "Mail inconnu. Redirection vers l'inscription…", true);
+          setTimeout(() => { showAuth("signup"); $("#su-mail").value = email.toLowerCase(); }, 1500);
+          return;
+        }
+        if (u === false) { authMsg("#msg-login", "Mot de passe incorrect."); return; }
+        loginUser(u);
+      }
+      async function doSignup() {
+        const d = {
+          prenom: $("#su-prenom").value.trim(), nom: $("#su-nom").value.trim(), tel: $("#su-tel").value.trim(),
+          mail: $("#su-mail").value.trim(), age: $("#su-age").value.trim(), poids: $("#su-poids").value.trim(), password: $("#su-pass").value,
+        };
+        if (!d.prenom || !d.nom || !d.mail || !d.password) { authMsg("#msg-signup", "Prénom, nom, mail et mot de passe sont obligatoires."); return; }
+        if (!$("#su-cgu").checked) { authMsg("#msg-signup", "Tu dois accepter les conditions pour créer ton compte."); return; }
+        if (Store.exists(d.mail)) {
+          authMsg("#msg-signup", "Ce mail a déjà un compte. Redirection vers la connexion…", true);
+          setTimeout(() => { showAuth("login"); $("#li-mail").value = d.mail.toLowerCase(); }, 1500);
+          return;
+        }
+        const u = await Store.create(d);
+        loginUser(u);
+      }
+      function loginUser(u) { CU = u; Store.setSession(u.email); activeConv = null; location.hash = "/"; renderAll(); }
+      function logout() { Store.clearSession(); CU = null; activeConv = null; location.hash = "/landing"; route(); }
+
+      /* ===================== PROGRESSION ===================== */
+      function updateProgressUI() {
+        const p = CU ? CU.progress || 0 : 0;
+        const ring = $("#ring");
+        if (ring) { const c = 163.36; ring.style.transition = "stroke-dashoffset 1s ease"; ring.setAttribute("stroke-dashoffset", String(c * (1 - p / 100))); }
+        if ($("#ring-pct")) $("#ring-pct").textContent = p + "%";
+      }
+      function addProgress(n) { if (!CU) return; CU.progress = Math.min(100, (CU.progress || 0) + n); Store.save(CU); updateProgressUI(); }
+
+      /* ===================== RENDU PAR UTILISATEUR ===================== */
+      function renderAll() { if (CU) $("#hello").textContent = CU.prenom || "Champion"; route(); }
+      function renderProgramme() {
+        const list = CU && CU.lastProgram && CU.lastProgram.exercises && CU.lastProgram.exercises.length ? CU.lastProgram.exercises : PROGRAMME;
+        $("#prog-list").innerHTML = list.map(exCard).join("");
+        $("#prog-count").textContent = list.length;
+      }
+      function renderProfil() {
+        if (!CU) return;
+        $("#pf-prenom").value = CU.prenom || ""; $("#pf-nom").value = CU.nom || "";
+        $("#pf-tel").value = CU.tel || ""; $("#pf-age").value = CU.age || ""; $("#pf-poids").value = CU.poids || "";
+        $("#pf-mail").textContent = CU.email || "";
+        $("#pf-name").textContent = ((CU.prenom || "") + " " + (CU.nom || "")).trim() || "Mon profil";
+        $("#pf-initials").textContent = (((CU.prenom || "")[0] || "") + ((CU.nom || "")[0] || "")).toUpperCase() || "AX";
+        $("#pf-level").textContent = Math.floor((CU.progress || 0) / 10);
+        $("#pf-sessions").textContent = CU.sessions || 0;
+        $("#pf-progress").textContent = (CU.progress || 0) + "%";
+      }
+      function saveProfil() {
+        if (!CU) return;
+        CU.prenom = $("#pf-prenom").value.trim(); CU.nom = $("#pf-nom").value.trim();
+        CU.tel = $("#pf-tel").value.trim(); CU.age = $("#pf-age").value.trim(); CU.poids = $("#pf-poids").value.trim();
+        Store.save(CU); renderProfil(); $("#hello").textContent = CU.prenom || "Champion"; toast("Profil enregistré ✓");
+      }
+
+      /* ===================== ROUTER ===================== */
+      const APP_ROUTES = ["/", "/analyse", "/programme", "/suivi", "/profil"];
+      function route() {
+        let path = location.hash.replace(/^#/, "");
+        if (!path.startsWith("/")) path = CU ? "/" : "/landing";
+        if (!CU && !["/landing", "/auth"].includes(path)) path = "/landing";
+        if (CU && ["/landing", "/auth"].includes(path)) path = "/";
+        let matched = false;
+        $$(".screen").forEach((s) => { const on = s.dataset.route === path; s.classList.toggle("active", on); if (on) matched = true; });
+        if (!matched) { const def = CU ? "/" : "/landing"; const el = $('.screen[data-route="' + def + '"]'); if (el) el.classList.add("active"); path = def; }
+        $(".app").style.display = APP_ROUTES.includes(path) ? "block" : "none";
+        $(".nav").style.display = CU && APP_ROUTES.includes(path) ? "block" : "none";
+        $$(".navitem").forEach((n) => n.classList.toggle("active", n.dataset.nav === path));
+        window.scrollTo(0, 0);
+        if (path === "/") updateProgressUI();
+        if (path === "/programme") renderProgramme();
+        if (path === "/suivi") animateBars();
+        if (path === "/profil") renderProfil();
+        if (path === "/chat") openChat();
+      }
+      window.addEventListener("hashchange", route);
+      // Mémorise le mode auth choisi depuis la landing
+      document.addEventListener("click", (e) => {
+        const a = e.target.closest("[data-auth]"); if (a) setTimeout(() => showAuth(a.dataset.auth), 0);
+      });
+      function animateBars() {
+        requestAnimationFrame(() => $$("#bars .b").forEach((b, i) => setTimeout(() => (b.style.height = b.dataset.h + "%"), i * 60)));
+      }
+
+      /* ===================== ANALYSE (GEMINI) ===================== */
+      let analyzing = false;
+      function buildPrompt(zone) {
+        const cible = zone === "auto"
+          ? "Détecte précisément la partie du corps montrée (jambes, pectoraux, dos, bras, épaules, abdos) et adapte le programme à CETTE zone."
+          : "L'utilisateur cible explicitement : " + zone + ". Concentre le programme sur cette zone.";
+        return [
+          "Tu es un coach sportif expert et kinésiologue. Tu analyses la photo (musculature, posture ou zone montrée).",
+          cible,
+          "Programme personnalisé, sûr, progressif, en français, adapté au niveau visible.",
+          "Réponds STRICTEMENT en JSON valide, sans texte autour :",
+          '{"zone":"zone ciblée","summary":"2-3 phrases: ce que tu observes + objectif","exercises":[{"title":"nom","muscle":"muscle principal","sets":"3 séries de 12 rep","rest":"60s","description":"exécution + conseil"}],"tips":["récup/nutrition","fréquence","sécurité"]}',
+          "4 à 5 exercices ciblés et 3 à 4 tips.",
+        ].join("\n");
+      }
+      function stripFences(t) { return String(t).trim().replace(/^```json\s*/i, "").replace(/^```\s*/, "").replace(/```$/, "").trim(); }
+      async function analyzePhoto(dataUrl, zone) {
+        const m = dataUrl.match(/^data:([^;]+);base64,(.+)$/); if (!m) throw new Error("Image illisible.");
+        const mime = m[1], b64 = m[2];
+        let json;
+        if (USE_PROXY) {
+          const res = await fetch(PROXY_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ imageDataUrl: dataUrl, zone }) });
+          if (!res.ok) throw new Error("Proxy " + res.status); json = await res.json();
+        } else {
+          json = await geminiFetch({ contents: [{ role: "user", parts: [{ text: buildPrompt(zone) }, { inline_data: { mime_type: mime, data: b64 } }] }], generationConfig: { responseMimeType: "application/json", temperature: 0.6 } });
+        }
+        let data;
+        if (USE_PROXY) data = json;
+        else { const text = json && json.candidates && json.candidates[0] && json.candidates[0].content ? json.candidates[0].content.parts[0].text : "{}"; data = JSON.parse(stripFences(text)); }
+        const exercises = Array.isArray(data.exercises) ? data.exercises.filter((e) => e && typeof e.title === "string") : [];
+        if (!exercises.length) throw new Error("L'IA n'a pas renvoyé d'exercices exploitables.");
+        return { zone: typeof data.zone === "string" && data.zone ? data.zone : zone, summary: typeof data.summary === "string" ? data.summary : "", exercises, tips: Array.isArray(data.tips) ? data.tips.map(String) : [] };
+      }
+      $("#frame").addEventListener("click", () => $("#file").click());
+      $("#file").addEventListener("change", (e) => {
+        const f = e.target.files && e.target.files[0]; if (!f) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => { lastImage = ev.target.result; $("#frame-img").src = lastImage; $("#frame-img").style.display = "block"; $("#frame-ph").style.display = "none"; $("#hint").style.display = "none"; runAnalysis(lastImage, currentZone); };
+        reader.readAsDataURL(f);
+      });
+      function showLoader(on) { $("#loader").classList.toggle("on", on); }
+      async function runAnalysis(dataUrl, zone) {
+        analyzing = true;
+        showLoader(true);
+        $("#scan").classList.add("on"); $("#placeholder").style.display = "none"; $("#errbox").style.display = "none";
+        $("#summary").style.display = "none"; $("#tips").style.display = "none"; $("#ex-list").innerHTML = "";
+        try {
+          const r = await analyzePhoto(dataUrl, zone);
+          if (CU) { CU.lastProgram = r; CU.sessions = (CU.sessions || 0) + 1; Store.save(CU); addProgress(PROGRESS_PER_REQUEST); }
+          renderResults(r);
+        } catch (err) {
+          console.error(err);
+          $("#errbox").innerHTML = '<div class="ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>' + ERR_ANALYSE.replace(/\n/g, "<br>"); $("#errbox").style.display = "block";
+        } finally { analyzing = false; showLoader(false); $("#scan").classList.remove("on"); }
+      }
+      function renderResults(r) {
+        const badge = $("#zone-badge");
+        if (r.zone) { badge.textContent = r.zone; badge.style.display = "inline-block"; } else badge.style.display = "none";
+        if (r.summary) { $("#summary-text").textContent = r.summary; $("#summary").style.display = "block"; }
+        $("#ex-list").innerHTML = r.exercises.map(exCard).join("");
+        if (r.tips && r.tips.length) { $("#tips-list").innerHTML = r.tips.map((t) => '<li><span class="tick">✓</span><span>' + esc(t) + "</span></li>").join(""); $("#tips").style.display = "block"; }
+      }
+
+      /* ===================== CHAT IA (mémoire par utilisateur) ===================== */
+      let activeConv = null;
+      function openChat() {
+        if (!CU) return;
+        if (!activeConv) {
+          if (CU.conversations.length) activeConv = CU.conversations[CU.conversations.length - 1];
+          else startNewConv(true);
+        }
+        renderContextChip(); renderMessages(); renderConvList();
+      }
+      function startNewConv(silent) {
+        if (!CU) return;
+        activeConv = { id: Date.now(), title: "Nouvelle conversation", createdAt: Date.now(), messages: [] };
+        CU.conversations.push(activeConv);
+        const exos = (CU.lastProgram && CU.lastProgram.exercises) || [];
+        const greet = exos.length
+          ? "Salut " + (CU.prenom || "") + " ! Je suis ton coach IA. J'ai bien tes " + exos.length + " exercices" + (CU.lastProgram.zone ? " (" + CU.lastProgram.zone + ")" : "") + ". Pose-moi tes questions sur ta technique, ta récup ou ta nutrition."
+          : "Salut " + (CU.prenom || "") + " ! Je suis ton coach IA. Lance une analyse photo pour générer ton programme, ou pose-moi directement tes questions.";
+        activeConv.messages.push({ role: "model", text: greet });
+        Store.save(CU);
+        if (!silent) { renderContextChip(); renderMessages(); renderConvList(); toggleHistory(false); }
+      }
+      function renderContextChip() {
+        const chip = $("#ctx-chip");
+        if (CU && CU.lastProgram && CU.lastProgram.exercises && CU.lastProgram.exercises.length) {
+          chip.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg> <span class="y">Programme :</span> ' + esc(CU.lastProgram.zone || "perso") + " · " + CU.lastProgram.exercises.length + " exos en mémoire";
+          chip.style.display = "flex";
+        } else chip.style.display = "none";
+      }
+      function bubble(m) { return '<div class="msg ' + (m.role === "user" ? "user" : m.typing ? "bot typing" : "bot") + '">' + esc(m.text) + "</div>"; }
+      function renderMessages() {
+        if (!activeConv) return;
+        const box = $("#chat-msgs"); box.innerHTML = activeConv.messages.map(bubble).join("");
+        box.scrollTop = box.scrollHeight;
+      }
+      function renderConvList() {
+        if (!CU) return;
+        const list = CU.conversations.slice().reverse();
+        $("#conv-list").innerHTML = list.length
+          ? list.map((c) => '<button class="conv-item' + (activeConv && c.id === activeConv.id ? " active" : "") + '" onclick="loadConversation(' + c.id + ')"><div class="t">' + esc(c.title) + '</div><div class="d">' + new Date(c.createdAt).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) + "</div></button>").join("")
+          : '<p class="muted" style="font-size:.82rem">Aucune conversation.</p>';
+      }
+      function loadConversation(id) {
+        activeConv = CU.conversations.find((c) => c.id === id) || activeConv;
+        renderMessages(); renderConvList(); toggleHistory(false);
+      }
+      function toggleHistory(on) { $("#history").classList.toggle("on", on); if (on) renderConvList(); }
+      $("#chat-input").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); sendChat(); } });
+      async function sendChat() {
+        if (!CU || !activeConv) return;
+        const inp = $("#chat-input"); const text = inp.value.trim(); if (!text) return;
+        inp.value = "";
+        activeConv.messages.push({ role: "user", text });
+        if (activeConv.title === "Nouvelle conversation") activeConv.title = text.slice(0, 38);
+        Store.save(CU); addProgress(PROGRESS_PER_REQUEST);
+        const typing = { role: "model", text: "Le coach réfléchit…", typing: true };
+        activeConv.messages.push(typing); renderMessages();
+        try {
+          const reply = await chatGemini(activeConv.messages.filter((m) => !m.typing));
+          activeConv.messages.pop();
+          activeConv.messages.push({ role: "model", text: reply });
+        } catch (err) {
+          console.error(err);
+          activeConv.messages.pop();
+          activeConv.messages.push({ role: "model", text: ERR_CHAT });
+        }
+        Store.save(CU); renderMessages(); renderConvList();
+      }
+      async function chatGemini(messages) {
+        const exos = (CU.lastProgram && CU.lastProgram.exercises) || [];
+        const ctx = "Tu es le coach sportif IA personnel de " + (CU.prenom || "l'utilisateur") + " (" + (CU.age || "?") + " ans, " + (CU.poids || "?") + " kg). "
+          + (exos.length ? "Son programme actuel" + (CU.lastProgram.zone ? " (" + CU.lastProgram.zone + ")" : "") + " : " + exos.map((e) => e.title + (e.muscle ? " [" + e.muscle + "]" : "")).join(", ") + ". " : "")
+          + "Réponds à ses questions sur la technique, la nutrition, la récupération et la progression. Sois précis, motivant, bienveillant, en français. Réponses concises et actionnables.";
+        let contents = messages.map((m) => ({ role: m.role === "user" ? "user" : "model", parts: [{ text: m.text }] }));
+        while (contents.length && contents[0].role === "model") contents.shift();
+        if (USE_PROXY) {
+          const res = await fetch(PROXY_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ chat: true, system: ctx, contents }) });
+          if (!res.ok) throw new Error("Proxy " + res.status); const jp = await res.json(); return jp.reply || jp.text || "";
+        }
+        const j = await geminiFetch({ systemInstruction: { parts: [{ text: ctx }] }, contents, generationConfig: { temperature: 0.7 } });
+        return (j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts[0].text) || "Je n'ai pas de réponse pour le moment.";
+      }
+
+      /* ===================== PWA MANIFEST (runtime) ===================== */
+      (function () {
+        const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="96" fill="#000"/><circle cx="256" cy="256" r="188" fill="none" stroke="#ffec00" stroke-width="16"/><text x="256" y="324" font-family="Oxanium,sans-serif" font-size="200" font-weight="800" font-style="italic" fill="#ffec00" text-anchor="middle">iA</text></svg>';
+        const icon = "data:image/svg+xml," + encodeURIComponent(svg);
+        const manifest = { name: "AI Fitness", short_name: "AI Fitness", start_url: ".", scope: ".", display: "standalone", orientation: "portrait", background_color: "#000000", theme_color: "#000000", icons: [{ src: icon, sizes: "any", type: "image/svg+xml", purpose: "any maskable" }] };
+        const link = document.createElement("link"); link.rel = "manifest"; link.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: "application/manifest+json" })); document.head.appendChild(link);
+        const apple = document.createElement("link"); apple.rel = "apple-touch-icon"; apple.href = icon; document.head.appendChild(apple);
+      })();
+
+      /* ===================== INIT ===================== */
+      const sess = Store.session();
+      if (sess) { CU = Store.get(sess); if (CU) $("#hello").textContent = CU.prenom || "Champion"; }
+      route();
+    </script>
+  </body>
+</html>
