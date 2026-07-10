@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#000000" />
+    <title>Erreur — AI FITNESS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Oxanium:wght@600;800&family=Inter:wght@400;500;600;700;800&display=swap" />
+    <style>
+      @property --angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+
+      :root {
+        --bg: #000000;
+        --yellow: #ffec00;
+        --yellow-d: #d9c900;
+        --white: #ffffff;
+        --muted: #9a9a9a;
+        --border: rgba(255, 255, 255, 0.1);
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+      html, body {
+        background: var(--bg);
+        color: var(--white);
+        font-family: "Inter", system-ui, sans-serif;
+        min-height: 100dvh;
+        overflow-x: hidden;
+      }
+      a { text-decoration: none; color: inherit; }
+
+      /* ====== FOND : grille + orbes + particules ====== */
+      .err-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+      .err-grid {
+        position: absolute; inset: -2px;
+        background-image:
+          linear-gradient(rgba(255,236,0,0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,236,0,0.04) 1px, transparent 1px);
+        background-size: 44px 44px;
+        mask-image: radial-gradient(ellipse 80% 70% at 50% 45%, #000 30%, transparent 75%);
+        -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 45%, #000 30%, transparent 75%);
+        animation: gridDrift 20s linear infinite;
+      }
+      @keyframes gridDrift { to { background-position: 44px 44px; } }
+      .err-orb {
+        position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.14;
+        animation: orbPulse 9s ease-in-out infinite;
+      }
+      .err-orb.o1 { width: 320px; height: 320px; background: var(--yellow); top: -120px; left: 50%; transform: translateX(-50%); }
+      .err-orb.o2 { width: 200px; height: 200px; background: #ff5d3c; bottom: -60px; left: 12%; animation-delay: 3s; }
+      .err-orb.o3 { width: 160px; height: 160px; background: rgba(255,236,0,0.6); bottom: 10%; right: 8%; animation-delay: 5.5s; }
+      @keyframes orbPulse {
+        0%,100% { opacity: 0.08; transform: translateY(0) scale(1); }
+        50%      { opacity: 0.2; transform: translateY(-20px) scale(1.08); }
+      }
+      .o1 { animation-name: orbPulseCentered; }
+      @keyframes orbPulseCentered {
+        0%,100% { opacity: 0.1; transform: translateX(-50%) scale(1); }
+        50%      { opacity: 0.22; transform: translateX(-50%) scale(1.1); }
+      }
+      #err-particles { position: absolute; inset: 0; }
+
+      /* ====== CONTENU ====== */
+      .err-wrap {
+        position: relative; z-index: 1;
+        min-height: 100dvh;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        padding: 2rem 1.5rem calc(2rem + env(safe-area-inset-bottom));
+        text-align: center;
+      }
+
+      /* Logo wordmark en haut */
+      .err-brand {
+        position: absolute;
+        top: calc(1.6rem + env(safe-area-inset-top));
+        display: flex; align-items: center;
+        animation: fadeDown 0.7s both;
+      }
+      .err-wordmark { font-family: "Anton"; font-style: italic; font-size: 1.25rem; text-transform: uppercase; letter-spacing: 0.005em; }
+      .err-wordmark .y { color: var(--yellow); }
+      .err-slashes { display: inline-flex; gap: 2.5px; margin-left: 7px; }
+      .err-slashes i { width: 3px; height: 13px; background: var(--yellow); transform: skewX(-20deg); border-radius: 1px; }
+      .err-slashes i:nth-child(2) { opacity: 0.68; }
+      .err-slashes i:nth-child(3) { opacity: 0.42; }
+      @keyframes fadeDown { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: translateY(0); } }
+
+      /* ====== SCANNER (signature) ====== */
+      .err-scanner {
+        position: relative;
+        width: min(72vw, 300px);
+        aspect-ratio: 1;
+        margin-bottom: 1.5rem;
+        animation: scannerIn 0.9s cubic-bezier(0.2,0.9,0.25,1) both;
+      }
+      @keyframes scannerIn { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+
+      /* Cercle radar tournant */
+      .err-radar {
+        position: absolute; inset: 0;
+        border-radius: 50%;
+        border: 1.5px solid rgba(255,236,0,0.15);
+        background: radial-gradient(circle at 50% 50%, rgba(255,236,0,0.03), transparent 70%);
+      }
+      .err-radar::before {
+        content: ""; position: absolute; inset: -1.5px;
+        border-radius: 50%;
+        border: 1.5px solid transparent;
+        border-top-color: var(--yellow);
+        border-right-color: rgba(255,236,0,0.4);
+        animation: radarSpin 2.4s linear infinite;
+      }
+      @keyframes radarSpin { to { transform: rotate(360deg); } }
+      /* Cercles concentriques */
+      .err-ring2, .err-ring3 {
+        position: absolute; border-radius: 50%;
+        border: 1px dashed rgba(255,236,0,0.18);
+      }
+      .err-ring2 { inset: 18%; animation: radarSpin 8s linear infinite reverse; }
+      .err-ring3 { inset: 34%; animation: radarSpin 5s linear infinite; }
+
+      /* Ligne de scan qui balaie */
+      .err-scanline {
+        position: absolute; left: 8%; right: 8%; top: 50%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--yellow), transparent);
+        box-shadow: 0 0 14px rgba(255,236,0,0.7);
+        animation: scanMove 2.6s ease-in-out infinite;
+      }
+      @keyframes scanMove {
+        0%,100% { transform: translateY(-4.4rem); opacity: 0.3; }
+        50%      { transform: translateY(4.4rem); opacity: 1; }
+      }
+
+      /* Code d'erreur au centre avec glitch */
+      .err-code {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        font-family: "Anton", sans-serif;
+        font-style: italic;
+        font-size: clamp(3.5rem, 18vw, 5.5rem);
+        color: var(--yellow);
+        line-height: 1;
+        text-shadow: 0 0 24px rgba(255,236,0,0.4);
+      }
+      .err-code .glitch {
+        position: relative;
+        animation: glitchShift 3.5s steps(1) infinite;
+      }
+      .err-code .glitch::before,
+      .err-code .glitch::after {
+        content: attr(data-code);
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+      }
+      .err-code .glitch::before {
+        color: #ff3c3c;
+        animation: glitchA 3.5s steps(1) infinite;
+        clip-path: inset(0 0 55% 0);
+      }
+      .err-code .glitch::after {
+        color: #00e5ff;
+        animation: glitchB 3.5s steps(1) infinite;
+        clip-path: inset(55% 0 0 0);
+      }
+      @keyframes glitchShift {
+        0%, 92%, 100% { transform: translate(0,0); }
+        93% { transform: translate(-2px, 1px); }
+        95% { transform: translate(2px, -1px); }
+        97% { transform: translate(-1px, 0); }
+      }
+      @keyframes glitchA {
+        0%, 92%, 100% { transform: translate(0,0); opacity: 0; }
+        93% { transform: translate(-3px, -2px); opacity: 0.8; }
+        96% { transform: translate(3px, 1px); opacity: 0.6; }
+      }
+      @keyframes glitchB {
+        0%, 92%, 100% { transform: translate(0,0); opacity: 0; }
+        94% { transform: translate(3px, 2px); opacity: 0.8; }
+        97% { transform: translate(-2px, -1px); opacity: 0.6; }
+      }
+
+      /* Corners façon viseur */
+      .err-corner { position: absolute; width: 26px; height: 26px; border: 0 solid var(--yellow); opacity: 0.6; }
+      .err-c-tl { top: 2%; left: 2%; border-top-width: 2px; border-left-width: 2px; border-top-left-radius: 6px; }
+      .err-c-tr { top: 2%; right: 2%; border-top-width: 2px; border-right-width: 2px; border-top-right-radius: 6px; }
+      .err-c-bl { bottom: 2%; left: 2%; border-bottom-width: 2px; border-left-width: 2px; border-bottom-left-radius: 6px; }
+      .err-c-br { bottom: 2%; right: 2%; border-bottom-width: 2px; border-right-width: 2px; border-bottom-right-radius: 6px; }
+
+      /* ====== TEXTES ====== */
+      .err-status {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        background: rgba(255,60,60,0.1);
+        border: 1px solid rgba(255,60,60,0.3);
+        color: #ff6b6b;
+        font-size: 0.68rem; font-weight: 800;
+        text-transform: uppercase; letter-spacing: 0.12em;
+        padding: 0.35rem 0.8rem;
+        border-radius: 999px;
+        margin-bottom: 1.1rem;
+        animation: fadeUp 0.6s 0.3s both;
+      }
+      .err-status b {
+        width: 7px; height: 7px; border-radius: 50%;
+        background: #ff4d4d;
+        box-shadow: 0 0 8px #ff4d4d;
+        animation: statusBlink 1.3s ease-in-out infinite;
+      }
+      @keyframes statusBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+      .err-title {
+        font-family: "Anton"; font-style: italic;
+        font-size: clamp(1.7rem, 7vw, 2.6rem);
+        text-transform: uppercase; line-height: 1;
+        margin-bottom: 0.9rem;
+        animation: fadeUp 0.6s 0.4s both;
+      }
+      .err-title .y { color: var(--yellow); }
+
+      .err-msg {
+        color: #cfcfcf;
+        font-size: 0.95rem; line-height: 1.6;
+        max-width: 30rem;
+        margin-bottom: 1.9rem;
+        animation: fadeUp 0.6s 0.5s both;
+      }
+      @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+      /* ====== BOUTONS ====== */
+      .err-actions {
+        display: flex; flex-direction: column; gap: 0.7rem;
+        width: 100%; max-width: 20rem;
+        animation: fadeUp 0.6s 0.6s both;
+      }
+      .err-btn {
+        display: flex; align-items: center; justify-content: center; gap: 0.55rem;
+        padding: 0.85rem 1.2rem;
+        border-radius: 999px;
+        font-family: "Anton"; font-style: italic;
+        text-transform: uppercase; letter-spacing: 0.03em;
+        font-size: 0.98rem;
+        transition: transform 0.12s, filter 0.2s, box-shadow 0.2s;
+        cursor: pointer; border: none;
+      }
+      .err-btn svg { width: 18px; height: 18px; }
+      .err-btn.primary {
+        background: linear-gradient(135deg, var(--yellow), var(--yellow-d));
+        color: #000;
+        box-shadow: 0 8px 26px rgba(255,236,0,0.28);
+      }
+      .err-btn.primary:hover { filter: brightness(1.07); transform: translateY(-1px); box-shadow: 0 10px 32px rgba(255,236,0,0.4); }
+      .err-btn.primary:active { transform: scale(0.97); }
+      .err-btn.ghost {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--border);
+        color: #fff;
+      }
+      .err-btn.ghost:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
+      .err-btn.ghost:active { transform: scale(0.97); }
+
+      /* Signature bas */
+      .err-sign {
+        position: absolute;
+        bottom: calc(1.3rem + env(safe-area-inset-bottom));
+        font-size: 0.62rem; color: var(--muted); opacity: 0.6;
+        letter-spacing: 0.04em;
+        animation: fadeUp 0.6s 0.8s both;
+      }
+
+      /* ====== SÉLECTEUR DEMO (retirer en prod si tu veux) ====== */
+      .err-demo {
+        position: absolute;
+        top: calc(1.5rem + env(safe-area-inset-top));
+        right: 1.2rem;
+        display: flex; gap: 4px;
+        z-index: 5;
+      }
+      .err-demo button {
+        font-family: "Oxanium", sans-serif; font-weight: 800;
+        font-size: 0.6rem;
+        padding: 0.3rem 0.5rem;
+        border-radius: 7px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--border);
+        color: var(--muted);
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .err-demo button:hover, .err-demo button.on {
+        background: rgba(255,236,0,0.12);
+        border-color: rgba(255,236,0,0.4);
+        color: var(--yellow);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; }
+        .err-scanline, .err-radar::before { animation: none !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Fond animé -->
+    <div class="err-bg" aria-hidden="true">
+      <div class="err-grid"></div>
+      <div class="err-orb o1"></div>
+      <div class="err-orb o2"></div>
+      <div class="err-orb o3"></div>
+      <canvas id="err-particles"></canvas>
+    </div>
+
+    <!-- Logo -->
+    <div class="err-brand">
+      <span class="err-wordmark">AI<span class="y"> FITNESS</span></span>
+      <span class="err-slashes"><i></i><i></i><i></i></span>
+    </div>
+
+    <!-- Sélecteur démo : bascule entre les codes d'erreur (supprime ce bloc en prod si tu veux) -->
+    <div class="err-demo" id="err-demo">
+      <button data-err="404" class="on">404</button>
+      <button data-err="403">403</button>
+      <button data-err="500">500</button>
+      <button data-err="503">503</button>
+    </div>
+
+    <div class="err-wrap">
+      <!-- Scanner signature -->
+      <div class="err-scanner">
+        <div class="err-radar"></div>
+        <div class="err-ring2"></div>
+        <div class="err-ring3"></div>
+        <div class="err-scanline"></div>
+        <div class="err-code"><span class="glitch" id="err-code-txt" data-code="403">403</span></div>
+        <span class="err-corner err-c-tl"></span>
+        <span class="err-corner err-c-tr"></span>
+        <span class="err-corner err-c-bl"></span>
+        <span class="err-corner err-c-br"></span>
+      </div>
+
+      <!-- Statut -->
+      <span class="err-status"><b></b><span id="err-status-txt">Zone introuvable</span></span>
+
+      <!-- Titre + message -->
+      <h1 class="err-title" id="err-title">Analyse <span class="y">impossible</span></h1>
+      <p class="err-msg" id="err-msg">Notre IA n'a pas trouvé la page que tu cherches. Elle a peut-être été déplacée, ou l'adresse est incorrecte. Reviens à l'accueil pour continuer ton entraînement.</p>
+
+      <!-- Actions -->
+      <div class="err-actions">
+        <a class="err-btn primary" href="/" id="err-home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Retour à l'accueil
+        </a>
+        <button class="err-btn ghost" onclick="history.back()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+          Page précédente
+        </button>
+      </div>
+
+      <!-- Signature -->
+      <p class="err-sign">@ By Brice Jct · Alpha OS · Groupe Alpha Nex Strasbourg</p>
+    </div>
+
+    <script>
+      /* ====== Contenu par code d'erreur ====== */
+      var ERRORS = {
+        "400": {
+          status: "Requête invalide",
+          title: ['Requête', ' incorrecte'],
+          msg: "La demande n'a pas pu être comprise par notre système. Vérifie l'adresse et réessaye."
+        },
+        "401": {
+          status: "Accès non autorisé",
+          title: ['Connexion', ' requise'],
+          msg: "Tu dois être connecté pour accéder à cette zone. Identifie-toi pour continuer."
+        },
+        "403": {
+          status: "Accès refusé",
+          title: ['Zone', ' verrouillée'],
+          msg: "Tu n'as pas les droits pour accéder à cette page. Cette section est réservée. Reviens à l'accueil pour continuer."
+        },
+        "404": {
+          status: "Zone introuvable",
+          title: ['Analyse', ' impossible'],
+          msg: "Notre IA n'a pas trouvé la page que tu cherches. Elle a peut-être été déplacée, ou l'adresse est incorrecte. Reviens à l'accueil pour continuer ton entraînement."
+        },
+        "500": {
+          status: "Erreur serveur",
+          title: ['Surcharge', ' système'],
+          msg: "Notre IA rencontre un problème technique de son côté. Ce n'est pas toi, c'est nous. Réessaye dans quelques instants."
+        },
+        "503": {
+          status: "Maintenance en cours",
+          title: ['Système', ' en pause'],
+          msg: "Notre IA effectue une mise à jour pour t'offrir de meilleures analyses. Le service revient très vite. Merci de ta patience."
+        }
+      };
+
+      function applyError(code) {
+        var e = ERRORS[code] || ERRORS["404"];
+        document.getElementById("err-code-txt").textContent = code;
+        document.getElementById("err-code-txt").setAttribute("data-code", code);
+        document.getElementById("err-status-txt").textContent = e.status;
+        document.getElementById("err-title").innerHTML = e.title[0] + '<span class="y">' + e.title[1] + '</span>';
+        document.getElementById("err-msg").textContent = e.msg;
+        document.title = "Erreur " + code + " — AI FITNESS";
+      }
+
+      /* ====== Détection auto du code d'erreur ======
+         Priorité : ?code=403  >  ?403  >  chemin  >  défaut 404
+         Sur GitHub Pages, ce fichier nommé 404.html sert toutes les URL introuvables → 404 par défaut. */
+      (function detectError() {
+        var params = new URLSearchParams(location.search);
+        var code = params.get("code")           // ?code=403
+                || params.get("error")           // ?error=500
+                || (location.search.match(/\b(400|401|403|404|500|503)\b/) || [])[1] // ?403
+                || null;
+        if (!code) {
+          // cherche dans le hash (#403) ou dans le pathname (/403 ou /403.html)
+          var m = (location.hash + " " + location.pathname).match(/\b(400|401|403|404|500|503)\b/);
+          code = m ? m[1] : "403";
+        }
+        applyError(code);
+      })();
+
+      /* ====== Sélecteur démo ====== */
+      (function() {
+        var demo = document.getElementById("err-demo");
+        if (!demo) return;
+        demo.addEventListener("click", function(ev) {
+          var btn = ev.target.closest("button[data-err]");
+          if (!btn) return;
+          demo.querySelectorAll("button").forEach(function(b){ b.classList.remove("on"); });
+          btn.classList.add("on");
+          applyError(btn.getAttribute("data-err"));
+        });
+      })();
+
+      /* ====== Canvas particules flottantes ====== */
+      (function() {
+        var cvs = document.getElementById("err-particles");
+        if (!cvs) return;
+        var ctx = cvs.getContext("2d");
+        var pts = [], W, H;
+        function resize() { W = cvs.width = window.innerWidth; H = cvs.height = window.innerHeight; }
+        resize();
+        window.addEventListener("resize", resize, { passive: true });
+        for (var i = 0; i < 46; i++) {
+          pts.push({
+            x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight,
+            r: Math.random()*1.6+0.4, vx: (Math.random()-0.5)*0.25, vy: (Math.random()-0.5)*0.25,
+            a: Math.random()*0.5+0.1, ph: Math.random()*Math.PI*2
+          });
+        }
+        function tick(t) {
+          ctx.clearRect(0,0,W,H);
+          pts.forEach(function(p) {
+            p.x += p.vx; p.y += p.vy;
+            if (p.x<-10) p.x=W+10; if (p.x>W+10) p.x=-10;
+            if (p.y<-10) p.y=H+10; if (p.y>H+10) p.y=-10;
+            var pulse = 0.5+0.5*Math.sin(t/1800+p.ph);
+            var alpha = p.a*pulse;
+            ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+            ctx.fillStyle = p.r>1.2 ? "rgba(255,236,0,"+alpha.toFixed(3)+")" : "rgba(255,255,255,"+(alpha*0.55).toFixed(3)+")";
+            ctx.fill();
+          });
+          for (var i=0;i<pts.length;i++) for (var j=i+1;j<pts.length;j++) {
+            var dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, d=Math.sqrt(dx*dx+dy*dy);
+            if (d<100) { ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y);
+              ctx.strokeStyle="rgba(255,236,0,"+(0.05*(1-d/100)).toFixed(3)+")"; ctx.lineWidth=0.6; ctx.stroke(); }
+          }
+          requestAnimationFrame(tick);
+        }
+        var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (!reduce) requestAnimationFrame(tick);
+      })();
+    </script>
+  </body>
+</html>
